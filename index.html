@@ -48,11 +48,23 @@
             height: 20px;
             position: absolute;
         }
-        div.ghost {
+        div#pac2 {
+            background: url('pacman.gif');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            width: 20px;
+            height: 20px;
+            position: absolute;
+        }
+        div#ghost {
             background: url('blinkyred.gif');
             background-repeat: no-repeat;
             background-position: center;
             background-size: cover;
+            width: 20px;
+            height: 20px;
+            position: absolute;
         }
         div.empty {
             
@@ -114,9 +126,11 @@
     <div id='container'>
         <div id='world'></div>
         <div id='pacman'></div>
+        <div id='pac2'></div>
+        <div id='ghost'></div>
         <div id='score'>0</div>
         <p1 style='color:white;'>Score</p1>
-        <div id='lives'>0</div>
+        <div id='lives'></div>
         <p2 style='color:white;'>Lives</p2>
     </div>
     <script>
@@ -124,19 +138,27 @@
             [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
             [2, 0, 2, 2, 1, 1, 1, 1, 1, 2],
             [2, 1, 2, 2, 1, 1, 1, 1, 1, 2],
-            [2, 1, 2, 2, 1, 1, 1, 4, 1, 2],
+            [2, 1, 2, 2, 1, 1, 1, 0, 1, 2],
             [2, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-            [2, 1, 1, 1, 2, 2, 1, 1, 1, 2],
-            [2, 1, 1, 1, 2, 2, 1, 1, 1, 2],
+            [2, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+            [2, 1, 1, 1, 1, 1, 1, 1, 1, 2],
             [2, 1, 1, 1, 2, 2, 1, 3, 1, 2],
             [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
         ];
         var score = 0;
-        var lives = 1;
+        var lives = 3;
         var pacman = {
             x: 1,
             y: 1
         };
+        var red = {
+            x: 7,
+            y: 3
+        };
+        var pac2 = {
+            x: 1,
+            y: 2
+        }
 
         function displayWorld() {
             var output = '';
@@ -150,8 +172,8 @@
                         output += "<div class='coin'></div>";
                     else if (world[i][j] == 3)
                         output += "<div class='cherry'></div>";  
-                    else if (world[i][j] == 4)
-                        output += "<div class='ghost'></div>";  
+                    // else if (world[i][j] == 4)
+                    //     output += "<div id='ghost'></div>";  
                     if (world[i][j] == 0)
                         output += "<div class='empty'></div>";
                 }
@@ -164,6 +186,15 @@
             document.getElementById('pacman').style.top = pacman.y * 20 + "px";
             document.getElementById('pacman').style.left = pacman.x * 20 + "px";
         }
+        function displayPac2() {
+            document.getElementById('pac2').style.top = pac2.y * 20 + "px";
+            document.getElementById('pac2').style.left = pac2.x * 20 + "px";
+        }
+        
+        function displayRed(){
+            document.getElementById('ghost').style.top = red.y * 20 + "px";
+            document.getElementById('ghost').style.left = red.x * 20 + "px";
+        }
         function displayScore() {
             document.getElementById('score').innerHTML = score;
         }
@@ -174,42 +205,57 @@
         displayPacman();
         displayScore();
         displayLives();
+        displayPac2();
+        displayRed();
 
         document.onkeydown = function (e) {
-            if (e.keyCode == 37 && world[pacman.y][pacman.x - 1] != 2) {
-                pacman.x--; //left
+            if (e.keyCode == 37 && world[pacman.y][pacman.x - 1] != 2 && world[pac2.y][pac2.x - 1] != 2) {
+                pacman.x--;
+                pac2.x--;//left
                 $('#pacman').css('transform', 'rotate(-180deg)')
+                $('#pac2').css('transform', 'rotate(-180deg)')
             }
-            else if (e.keyCode == 39 && world[pacman.y][pacman.x + 1] != 2) {
-                pacman.x++; //right
+            else if (e.keyCode == 39 && world[pacman.y][pacman.x + 1] != 2 && world[pac2.y][pac2.x + 1] != 2) {
+                pacman.x++;
+                pac2.x++;//right
                 $('#pacman').css('transform', 'rotate(0deg)')
+                $('#pac2').css('transform', 'rotate(0deg)')
             }
-            else if (e.keyCode == 38 && world[pacman.y - 1][pacman.x] != 2) {
-                pacman.y--; //down
+            else if (e.keyCode == 38 && world[pacman.y - 1][pacman.x] != 2 && world[pac2.y - 1][pac2.x] != 2) {
+                pacman.y--;
+                pac2.y--;//down
                 $('#pacman').css('transform', 'rotate(-90deg)')
+                $('#pac2').css('transform', 'rotate(-90deg)')
             }
-            else if (e.keyCode == 40 && world[pacman.y + 1][pacman.x] != 2) {
-                pacman.y++; //up
+            else if (e.keyCode == 40 && world[pacman.y + 1][pacman.x] != 2 && world[pac2.y + 1][pac2.x] != 2) {
+                pacman.y++;
+                pac2.y++;//up
                 $('#pacman').css('transform', 'rotate(90deg)')
+                $('#pac2').css('transform', 'rotate(90deg)')
             }
-            if (world[pacman.y][pacman.x] == 1) {
+            if (world[pacman.y][pacman.x] == 1 || world[pac2.y][pac2.x] == 1) {
                 world[pacman.y][pacman.x] = 0;
+                world[pac2.y][pac2.x] = 0;
                 score += 10;
                 displayWorld();
                 displayScore();
             }
-            if (world[pacman.y][pacman.x] == 3) {
+            if (world[pacman.y][pacman.x] == 3 || world[pac2.y][pac2.x] == 3) {
                 world[pacman.y][pacman.x] = 0;
+                world[pac2.y][pac2.x] = 0;
                 score += 50;
                 displayWorld();
                 displayScore();
             }
-            if (world[pacman.y][pacman.x] == 4) {
-                world[pacman.y][pacman.x] = 0;
+            if (world[pacman.y][pacman.x] == 4 || world[pac2.y][pac2.x] == 4) {
                 lives -= 1;
                 pacman = {
-                x: 1,
-                y: 1
+                    x: 1,
+                    y: 1
+                };
+                pac2 = {
+                    x: 1,
+                    y: 2
                 };
                 displayWorld();
                 displayLives();
@@ -217,8 +263,10 @@
             // console.log(e.keyCode);
             if(lives<=0){
                 $('p2').append('<div id="gameover">GAME OVER</div>');
-            }
+            } else {
             displayPacman();
+            displayPac2();
+            }
         }
     </script>
 </body>
